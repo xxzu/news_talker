@@ -14,9 +14,8 @@ from redis_server.redis_utils import RedisHandler
 
 from dotenv import load_dotenv
 load_dotenv()
-REDIS_SERVER_ZHIHU = os.getenv('REDIS_SERVER_ZHIHU ')
-REDIS_ZHIHU_PUSHED = os.getenv('REDIS_ZHIHU_PUSHED ')
-
+REDIS_SERVER_ZHIHU = os.getenv('REDIS_SERVER_ZHIHU')
+REDIS_ZHIHU_PUSHED = os.getenv('REDIS_ZHIHU_PUSHED')
 
 
 # 初始化 Redis 连接
@@ -36,11 +35,14 @@ def save_messages_to_redis():
     
     for item in zhihu_hot_list:
         
+        
         json_item = json.dumps(item)
-        item_id = str(item['id'])  # 获取唯一 id
+        item_id = item.get('id') 
+        # item_id = item['id'] # 获取唯一 id
+       
         
         # 判断该 id 是否已经推送过
-        if redis_zhihu_pushed.is_in_set(item_id):
+        if redis_zhihu_pushed.is_in_set(str(item_id)):
             continue  # 如果已推送过该数据，则跳过
 
         # 将新数据存入 Redis 集合
@@ -71,9 +73,9 @@ def push_zhihu_hot_to_telegram():
 
 # 主程序运行
 if __name__ == "__main__":
-    # # 不清空 Redis 数据，避免每次启动都丢失数据
-    # redis_server_zhihu.clear_all_data()
-    # redis_zhihu_pushed.clear_all_data()
+    # # # 不清空 Redis 数据，避免每次启动都丢失数据
+    # redis_server_zhihu.clear_database()
+    # redis_zhihu_pushed.clear_database()
 
     # print("每次启动判断数据展示", redis_server_zhihu.get_all_from_set())  # []
 
@@ -86,4 +88,5 @@ if __name__ == "__main__":
     while True:
         schedule.run_pending()
         time.sleep(1)
-       
+    #    save_messages_to_redis()
+    #    push_zhihu_hot_to_telegram()
