@@ -27,14 +27,14 @@ def delay(seconds):
     time.sleep(seconds)
 
 # 定义获取热点的时间间隔（以秒为单位，例如 10 秒）
-INTERVAL_TIME = 5
-
+INTERVAL_TIME = 4
+INTERVAL_TIME_NEWS = 120
 # 存储新的知乎数据到 Redis
 def save_messages_to_redis():
     zhihu_hot_list = get_zhihu_hot()
     
     for item in zhihu_hot_list:
-        
+        print('获取到数据：',item)
         
         json_item = json.dumps(item)
         item_id = item.get('id') 
@@ -50,18 +50,19 @@ def save_messages_to_redis():
         
 
 def push_zhihu_hot_to_telegram():
-    print("程序开始执行...")
+    print('开始推送...')
 
     try:
         if redis_server_zhihu.get_set_length() != 0:
             item = redis_server_zhihu.random_pop_messages()
-            # print('获取到的消息:', item)
+            print('获取到的消息:', item)
             
             # 将 item 从字符串解析为字典
             json_item = json.loads(item)
             
             # 检查该 id 是否已经推送过
             if not redis_zhihu_pushed.is_in_set(str(json_item['id'])):
+                
                 message = f"<b>{json_item['title']}</b>\n<a href=\"{json_item['url']}\">查看详情</a>"
                 send_to_telegram(message)
                 # 将已推送的 id 存入 Redis
@@ -80,13 +81,14 @@ if __name__ == "__main__":
     # print("每次启动判断数据展示", redis_server_zhihu.get_all_from_set())  # []
 
     # 定时任务：每隔 INTERVAL_TIME 秒运行一次
-    schedule.every(INTERVAL_TIME).seconds.do(save_messages_to_redis)
+    schedule.every(INTERVAL_TIME_NEWS).seconds.do(save_messages_to_redis)
     schedule.every(INTERVAL_TIME).seconds.do(push_zhihu_hot_to_telegram)
 
     # 启动定时任务
-    
+    print('done')
     while True:
+        save_messages_to_redis()
         schedule.run_pending()
-        time.sleep(1)
-    #    save_messages_to_redis()
-    #    push_zhihu_hot_to_telegram()
+        # time.sleep(1)
+        # save_messages_to_redis()
+        # push_zhihu_hot_to_telegram()
