@@ -33,7 +33,7 @@ class LOGGER(logging.Logger):  # Inherit from logging.Logger
 
 # Example usage
 if __name__ == "__main__":
-    log_dir = "./logs"  # 日志目录
+    log_dir = "./logs1"  # 日志目录
     log_name = "my_log.log"  # 日志文件名
     
     # 实例化 logger

@@ -47,7 +47,9 @@ def save_messages_to_redis():
                             bilibili_hot_list,
                             baidu_news_list,
                             douyin_hot_list,
-                            news36kr_hot_list
+                            news36kr_hot_list,
+                            fetch_cankaoxinxi_news(),
+                            fetch_kaopu_news_data(),
                             
                             
                             
@@ -75,7 +77,7 @@ def push_news_hot_to_telegram():
             item = redis_server.random_pop_messages()
             
             json_item = json.loads(item)
-            logger.info('消息推送：',json_item)
+            #logger.info(f'消息推送：{json_item}')
 
             if not redis_pushed.is_in_set(str(json_item['id'])):
                 message = format_message(json_item)
@@ -89,12 +91,31 @@ def push_news_hot_to_telegram():
 
 # 格式化消息
 def format_message(json_item):
-    if json_item['social_media'] == '微博':
-        return f"<b>[{json_item['social_media']}]</b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>\n热搜排行：<b>{json_item['rank']}</b>"
-    elif json_item['social_media'] == '36kr':
-        return f"<b>[{json_item['social_media']}]</b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>\n新闻时间：<b>{json_item['date']}</b>"
-    else:
-        return f"<b>[{json_item['social_media']}]</b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>"
+    try:
+        if json_item['social_media'] == '微博':
+            return f"<b>[{json_item['social_media']}]</b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>\n热搜实时排行：<b>{json_item['rank']}</b>"
+        elif json_item['social_media'] == '36kr':
+            return f"<b>[{json_item['social_media']}]</b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>\n新闻时间：<b>{json_item['date']}</b>"
+        elif json_item['social_media'] =="参考消息":
+            # logger.info(f"<b>[{json_item['social_media']}:{json_item['channelName']}]</b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>\n新闻时间：<b>{json_item['date']}</b>")
+            return f"<b>[{json_item['social_media']}:{json_item['channelName']}]</b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>\n新闻时间：<b>{json_item['date']}</b>"
+        elif json_item['social_media'] == 'kaopu':
+            # title = json_item['title']
+            hover_description = json_item['extra']['hover'][:150]
+            url = json_item['url']
+            
+            # Full description in the message
+            message = f"<b>[{json_item['social_media']}:{json_item['channelName']}]</b>:"
+            # message += f"<b>{title}</b>\n"  # Title as bold
+            message += f"<a href='{url}'>{json_item['title']}</a>\n\n"  # Link to the full article
+            message += f"<small>{hover_description}</small>\n"  # Full description as italic
+            message += f"新闻时间：<b>{json_item['date']}</b>"
+            return message
+        else:
+            return f"<b>[{json_item['social_media']}]</b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>"
+    except Exception as e:
+        logger.warning('消息格式化出现错误：',e)
+        return  f"<b>[{e}]</b>"
 
 # 主程序运行
 if __name__ == "__main__":
