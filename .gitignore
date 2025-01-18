@@ -5,3 +5,16 @@ redis_server/__pycache__/__init__.cpython-38.pyc
 redis_server/__pycache__/redis_utils.cpython-38.pyc
 telegram_utils/__pycache__/sand_to_tg.cpython-38.pyc
 logs/my_log.log
+news_pull_utils/__pycache__/baidu.cpython-38.pyc
+news_pull_utils/__pycache__/bilibili.cpython-38.pyc
+news_pull_utils/__pycache__/tieba.cpython-38.pyc
+news_pull_utils/__pycache__/toutiao.cpython-38.pyc
+.gitignore
+utils/__pycache__/ivs_log.cpython-38.pyc
+utils/__pycache__/__init__.cpython-38.pyc
+news_pull_utils/__pycache__/weibo.cpython-38.pyc
+.gitignore
+dev.env
+.vscode/launch.json
+.gitignore
+.vscode/settings.json

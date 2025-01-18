@@ -18,7 +18,8 @@ def send_to_telegram(message: str):
         response = requests.post(url, json={
             "chat_id": TELEGRAM_CHAT_ID,
             "text": message,
-            "parse_mode": "HTML"
+            "parse_mode": "HTML",
+            "disable_web_page_preview": True  # 禁用链接预览
         })
         
         response_data = response.json()

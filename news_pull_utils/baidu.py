@@ -1,6 +1,8 @@
 import requests
 import re
 import json
+import sys
+sys.path.append('.')
 from utils.ivs_log import LOGGER
 # 定义日志配置
 logger = LOGGER()
