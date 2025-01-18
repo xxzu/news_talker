@@ -1,7 +1,10 @@
 
 import requests
+import sys
+sys.path.append('.')
 from urllib.parse import urlencode,quote
 from utils.ivs_log import LOGGER
+
 # 定义日志配置
 logger = LOGGER()
 def fetch_weibo_hot_search():
@@ -25,9 +28,9 @@ def fetch_weibo_hot_search():
             # 构建结果项
             result = {
                 "social_media":"微博",
-                "id": item['num'],
+                "id": item['word'],# num 会变化，估计这里是热度值
                 "title": item['word'],
-                "rank":item.get('rank',float('inf')) ,
+                "rank":item.get('rank',float('inf')) + 1,
                 "url": f"https://s.weibo.com/weibo?q={quote(keyword)}"
                 
             }
