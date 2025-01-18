@@ -108,7 +108,7 @@ def format_message(json_item):
             message = f"<b>[{json_item['social_media']}:{json_item['channelName']}]</b>:"
             # message += f"<b>{title}</b>\n"  # Title as bold
             message += f"<a href='{url}'>{json_item['title']}</a>\n\n"  # Link to the full article
-            message += f"<small>{hover_description}</small>\n"  # Full description as italic
+            message += f"<span class ="tg-spoiler">{hover_description}</span>\n"  # Full description as italic
             message += f"新闻时间：<b>{json_item['date']}</b>"
             return message
         else:
