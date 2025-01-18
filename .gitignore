@@ -15,6 +15,6 @@ utils/__pycache__/__init__.cpython-38.pyc
 news_pull_utils/__pycache__/weibo.cpython-38.pyc
 .gitignore
 dev.env
-.vscode/launch.json
+
 .gitignore
-.vscode/settings.json
+
