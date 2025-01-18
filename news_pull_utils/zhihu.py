@@ -1,5 +1,7 @@
 import requests
-
+from utils.ivs_log import LOGGER
+# 定义日志配置
+logger = LOGGER()
 def get_zhihu_hot():
     url = "https://www.zhihu.com/api/v3/feed/topstory/hot-lists/total?limit=20&desktop=true"
     try:
@@ -18,6 +20,7 @@ def get_zhihu_hot():
             
 
             zhihu_hot_list.append({
+                "social_media":"知乎",
                 "id": target.get("id"),
                 "title": target.get("title"),
                 "icon": f"/api/proxy?img={card_label.get('night_icon')}" if card_label.get("night_icon") else None,
@@ -27,5 +30,5 @@ def get_zhihu_hot():
         return zhihu_hot_list
 
     except requests.RequestException as e:
-        print("获取知乎热点时发生错误:", e)
+        logger("获取知乎热点时发生错误:", e)
         return []

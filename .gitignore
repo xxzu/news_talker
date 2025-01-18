@@ -4,3 +4,4 @@ news_pull_utils/__pycache__/zhihu.cpython-38.pyc
 redis_server/__pycache__/__init__.cpython-38.pyc
 redis_server/__pycache__/redis_utils.cpython-38.pyc
 telegram_utils/__pycache__/sand_to_tg.cpython-38.pyc
+logs/my_log.log
