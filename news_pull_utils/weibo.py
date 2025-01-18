@@ -1,12 +1,19 @@
 
 import requests
-import sys
-sys.path.append('.')
+
 from urllib.parse import urlencode,quote
 from utils.ivs_log import LOGGER
 
 # 定义日志配置
 logger = LOGGER()
+import hashlib
+
+
+
+
+
+
+
 def fetch_weibo_hot_search():
     try:
         url = "https://weibo.com/ajax/side/hotSearch"
@@ -24,18 +31,18 @@ def fetch_weibo_hot_search():
             
             # 构建关键词
             keyword = item.get('word_scheme') or f"#{item['word']}#"
-            
+            hash_value = hashlib.sha256(keyword.encode('utf-8')).hexdigest()
             # 构建结果项
             result = {
                 "social_media":"微博",
-                "id": item['word'],# num 会变化，估计这里是热度值
+                "id": hash_value,# num 会变化，估计这里是热度值
                 "title": item['word'],
                 "rank":item.get('rank',float('inf')) + 1,
                 "url": f"https://s.weibo.com/weibo?q={quote(keyword)}"
                 
             }
             results.append(result)
-        results = sorted(results,key=lambda x : x['rank'])[:20]
+        results = sorted(results,key=lambda x : x['rank'])[:10]
         return results
     except Exception as e:
         logger.error(f'抓取微博消息出现问题{e}')

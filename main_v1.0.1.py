@@ -36,6 +36,8 @@ def save_messages_to_redis():
         zhihu_hot_list = get_zhihu_hot()
         weibo_hot_list = fetch_weibo_hot_search()
         toutiao_hot_list = get_toutiao_hot()
+        douyin_hot_list = fetch_douyin_hot_search()
+        news36kr_hot_list = get_36kr_newsflashes()
         combined_news_hot_list = list(
                         chain(
                             zhihu_hot_list,
@@ -43,7 +45,11 @@ def save_messages_to_redis():
                             toutiao_hot_list,
                             tieba_hot_list,
                             bilibili_hot_list,
-                            baidu_news_list
+                            baidu_news_list,
+                            douyin_hot_list,
+                            news36kr_hot_list
+                            
+                            
                             
                             ))
         
@@ -84,9 +90,11 @@ def push_news_hot_to_telegram():
 # 格式化消息
 def format_message(json_item):
     if json_item['social_media'] == '微博':
-        return f"<b><i>[{json_item['social_media']}]</i></b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>\n热搜排行：<b>{json_item['rank']}</b>"
+        return f"<b>[{json_item['social_media']}]</b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>\n热搜排行：<b>{json_item['rank']}</b>"
+    elif json_item['social_media'] == '36kr':
+        return f"<b>[{json_item['social_media']}]</b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>\n新闻时间：<b>{json_item['date']}</b>"
     else:
-        return f"<b><i>[{json_item['social_media']}]</i></b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>"
+        return f"<b>[{json_item['social_media']}]</b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>"
 
 # 主程序运行
 if __name__ == "__main__":
