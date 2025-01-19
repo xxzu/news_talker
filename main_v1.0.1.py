@@ -50,6 +50,7 @@ def save_messages_to_redis():
                             news36kr_hot_list,
                             fetch_cankaoxinxi_news(),
                             fetch_kaopu_news_data(),
+                            fetch_zaobao_news(),
                             
                             
                             
@@ -105,11 +106,24 @@ def format_message(json_item):
             return f"<b>[{json_item['social_media']}:{json_item['channelName']}]</b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>\n新闻时间：<b>{json_item['date']}</b>"
         elif json_item['social_media'] == 'kaopu':
             # title = json_item['title']
-            hover_description = json_item['extra']['hover'][:150]
+            hover_description = json_item['extra']['hover'][:200]
             url = json_item['url']
             
             # Full description in the message
             message = f"<b>[{json_item['social_media']}:{json_item['channelName']}]</b>:"
+            # message += f"<b>{title}</b>\n"  # Title as bold
+            message += f"<a href='{url}'>{json_item['title']}</a>\n"  # Link to the full article
+            message += f"<blockquote expandable>{hover_description}</blockquote>\n"  # Full description as italic
+
+            message += f"新闻时间：<b>{json_item['date']}</b>"
+            return message
+        elif json_item['social_media'] == '联合早报':
+            # title = json_item['title']
+            hover_description = json_item['description']
+            url = json_item['url']
+            
+            # Full description in the message
+            message = f"<b>[{json_item['social_media']}:]</b>:"
             # message += f"<b>{title}</b>\n"  # Title as bold
             message += f"<a href='{url}'>{json_item['title']}</a>\n"  # Link to the full article
             message += f"<blockquote expandable>{hover_description}</blockquote>\n"  # Full description as italic
