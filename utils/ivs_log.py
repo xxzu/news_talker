@@ -16,20 +16,41 @@ class LOGGER(logging.Logger):  # Inherit from logging.Logger
         self.log_path = os.path.join(log_dir, logfile_name)
         self.setup_log()
 
+    # def setup_log(self):
+    #     # 设置日志级别
+    #     self.setLevel(logging.INFO)
+        
+    #     # 创建 TimedRotatingFileHandler 处理器，设置每天切割，保留2天日志
+    #     file_handler = TimedRotatingFileHandler(filename=self.log_path, when="D", interval=1, backupCount=2)
+    #     file_handler.suffix = "%Y-%m-%d.log"
+    #     file_handler.extMatch = re.compile(r"^\d{4}-\d{2}-\d{2}.log$")
+        
+    #     # 设置日志输出格式
+    #     file_handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+        
+    #     # 将文件处理器添加到 logger 中
+    #     self.addHandler(file_handler)
     def setup_log(self):
-        # 设置日志级别
         self.setLevel(logging.INFO)
         
-        # 创建 TimedRotatingFileHandler 处理器，设置每天切割，保留7天日志
-        file_handler = TimedRotatingFileHandler(filename=self.log_path, when="D", interval=1, backupCount=7)
+        # 创建 TimedRotatingFileHandler
+        file_handler = TimedRotatingFileHandler(
+            filename=self.log_path,
+            when="D",
+            interval=1,
+            backupCount=2,
+            utc=False  # False 表示按系统时间（本地时间）切割日志
+        )
         file_handler.suffix = "%Y-%m-%d.log"
-        file_handler.extMatch = re.compile(r"^\d{4}-\d{2}-\d{2}.log$")
         
-        # 设置日志输出格式
-        file_handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+        # 设置日志格式
+        file_handler.setFormatter(logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        ))
         
-        # 将文件处理器添加到 logger 中
+        # 添加文件处理器
         self.addHandler(file_handler)
+
 
 # Example usage
 if __name__ == "__main__":

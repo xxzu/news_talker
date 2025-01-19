@@ -55,9 +55,12 @@ def save_messages_to_redis():
                             
                             ))
         
-        
+        # 用于跟踪已经记录的社交平台信息
+        recorded_platforms = set()
         for item in combined_news_hot_list:
-            # logging.info(f"获取到数据：{item}")
+            recorded_platforms.add(item.get('social_media', ' '))
+            
+
             json_item = json.dumps(item)
             item_id = item.get('id')
 
@@ -65,6 +68,7 @@ def save_messages_to_redis():
                 continue  # 跳过已推送的消息
 
             redis_server.add_to_set(json_item)
+        logger.info(f"：{recorded_platforms}")
     except Exception as e:
         logger.error(f"保存消息到 Redis 时发生错误: {e}")
 
@@ -77,7 +81,7 @@ def push_news_hot_to_telegram():
             item = redis_server.random_pop_messages()
             
             json_item = json.loads(item)
-            #logger.info(f'消息推送：{json_item}')
+            logger.info(f'消息推送：{json_item}')
 
             if not redis_pushed.is_in_set(str(json_item['id'])):
                 message = format_message(json_item)
@@ -108,7 +112,8 @@ def format_message(json_item):
             message = f"<b>[{json_item['social_media']}:{json_item['channelName']}]</b>:"
             # message += f"<b>{title}</b>\n"  # Title as bold
             message += f"<a href='{url}'>{json_item['title']}</a>\n\n"  # Link to the full article
-            message += f"<span class ="tg-spoiler">{hover_description}</span>\n"  # Full description as italic
+            message += f"<'blockquote expandable'>{hover_description}</blockquote>\n"  # Full description as italic
+
             message += f"新闻时间：<b>{json_item['date']}</b>"
             return message
         else:
