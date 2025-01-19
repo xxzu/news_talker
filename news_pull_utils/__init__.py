@@ -9,6 +9,7 @@ __all__ = [
     'get_36kr_newsflashes',
     'fetch_cankaoxinxi_news',
     'fetch_kaopu_news_data',
+    'fetch_zaobao_news',
 ]
 
 from .zhihu import get_zhihu_hot
@@ -21,3 +22,4 @@ from .douyin import fetch_douyin_hot_search
 from .news36kr import get_36kr_newsflashes
 from .cankaoxiaoxi import fetch_cankaoxinxi_news
 from .kaopu import fetch_kaopu_news_data
+from .zaobao import fetch_zaobao_news
