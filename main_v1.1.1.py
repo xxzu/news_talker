@@ -18,12 +18,18 @@ from dotenv import load_dotenv
 load_dotenv()
 REDIS_SERVER = os.getenv('REDIS_SERVER')
 REDIS_PUSHED = os.getenv('REDIS_PUSHED')
-INTERVAL_TIME_NEWS = int(os.getenv('INTERVAL_TIME_NEWS'))
-INTERVAL_TIME = int(os.getenv('INTERVAL_TIME'))
+
+##针对实时性很高要求的金融消息单独建立表格
+REDIS_SERVER_FINANCIAL=os.getenv('REDIS_SERVER_FINANCIAL')
+REDIS_PUSHED_FINANCIAL=os.getenv('REDIS_PUSHED_FINANCIAL')
+
+
+INTERVAL_TIME_FETCH_NEWS = int(os.getenv('INTERVAL_TIME_FETCH_NEWS'))
+INTERVAL_PUSH_TIME = int(os.getenv('INTERVAL_PUSH_TIME'))
 
 ## 金融消息推送
-FINANCIAL_INTERVAL_TIME_NEWS = int(os.getenv('FINANCIAL_INTERVAL_TIME_NEWS'))
-FINANCIAL_INTERVAL_TIME = int(os.getenv('FINANCIAL_INTERVAL_TIME'))
+FINANCIAL_FETCH_TIME_NEWS = int(os.getenv('FINANCIAL_FETCH_TIME_NEWS'))
+FINANCIAL_PUSH_TIME = int(os.getenv('FINANCIAL_PUSH_TIME'))
 
 
 # 初始化 Redis 连接
@@ -31,8 +37,8 @@ redis_server = RedisHandler(set_key=REDIS_SERVER)
 redis_pushed = RedisHandler(set_key=REDIS_PUSHED)
 
 
-redis_financial_server = RedisHandler(set_key='RREDIS_SERVER_FINANCIAL',default_ttl=3600)
-redis_financial_pushed = RedisHandler(set_key='REDIS_PUSHED_FINANCIAL',default_ttl=7200)
+redis_financial_server = RedisHandler(set_key=REDIS_SERVER_FINANCIAL,default_ttl=3600)
+redis_financial_pushed = RedisHandler(set_key=REDIS_PUSHED_FINANCIAL,default_ttl=7200)
 
 def save_financial_messages_to_redis():
     try: 
@@ -182,12 +188,12 @@ def format_message(json_item):
             url = json_item['url']
             
             # Full description in the message
-            message = f"<b>[{json_item['social_media']}:{json_item['info']}]</b>:"
+            message = f"<b>[{json_item['social_media']}:{json_item['info']}]</b>\n"
             # message += f"<b>{title}</b>\n"  # Title as bold
             message += f"<a href='{url}'>{json_item['title']}</a>\n"  # Link to the full article
             # message += f"<blockquote expandable>{hover_description}</blockquote>\n"  # Full description as italic
 
-            message += f"新闻时间：<b>{json_item['date']}</b>"
+            message += f"<b>{json_item['date']}</b>"
             return message
         
         
@@ -200,10 +206,10 @@ def format_message(json_item):
 # 主程序运行
 if __name__ == "__main__":
     
-    schedule.every(INTERVAL_TIME_NEWS).seconds.do(save_messages_to_redis)
-    schedule.every(INTERVAL_TIME).seconds.do(push_news_hot_to_telegram)
-    schedule.every(FINANCIAL_INTERVAL_TIME_NEWS).seconds.do(save_financial_messages_to_redis)
-    schedule.every(FINANCIAL_INTERVAL_TIME).seconds.do(push_financial_messages_to_telegram)
+    schedule.every(INTERVAL_TIME_FETCH_NEWS).seconds.do(save_messages_to_redis)
+    schedule.every(INTERVAL_PUSH_TIME).seconds.do(push_news_hot_to_telegram)
+    schedule.every(FINANCIAL_FETCH_TIME_NEWS).seconds.do(save_financial_messages_to_redis)
+    schedule.every(FINANCIAL_PUSH_TIME).seconds.do(push_financial_messages_to_telegram)
 
 
     logger.info('程序启动成功！')
