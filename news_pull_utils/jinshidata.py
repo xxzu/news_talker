@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
+
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta, timezone
 from typing import List, Dict
 from utils.ivs_log import LOGGER
-
+import re
 # 定义日志配置
 logger = LOGGER()
 
@@ -22,21 +24,30 @@ def parse_relative_date(relative_time: str, timezone: str = "Asia/Shanghai") -> 
         # 默认返回当前时间戳
         return int(datetime.now().timestamp() * 1000)
 
-
-def formatted_time(datestamp):
-    from datetime import datetime
-
+import time
+def get_time():
+   
+    # current_time = datetime.now()
+    
     # 时间戳（毫秒）
-    timestamp_s = datestamp / 1000  # 转换为秒
+    # timestamp_s = datestamp / 1000  # 转换为秒
+    
+
+# 获取当前时间戳
+    timestamp_s = time.time()
+
+    # # 输出时间戳
+    # print("当前时间戳:", timestamp)
+
     date = datetime.fromtimestamp(timestamp_s, timezone.utc)
 
     # 转换为本地时间
     local_time = date.astimezone(timezone(timedelta(hours=8)))  # UTC+8
-    formatted_date = local_time.strftime("%Y-%m-%d %H:%M:%S")
+    formatted_date = local_time.strftime("%Y-%m-%d ")
     return formatted_date
 
 
-def fetch_gelonghui_news() -> List[Dict]:
+def fetch_jinse_news() -> List[Dict]:
     try:
         # 基础 URL
         base_url = "https://www.jinse.cn"
@@ -62,11 +73,22 @@ def fetch_gelonghui_news() -> List[Dict]:
 
             # 提取时间（假设时间在特定 class 中）
             time_tag = element.select_one(".time")
-            news_time = time_tag.text.strip() if time_tag else "无时间"
+            
+            
+            # news_time = time_tag.text.strip() if time_tag else "无时间"
+            if time_tag :
+                news_time = get_time() +" " + time_tag.text.strip() 
+            
+            else:
+                news_time = "无时间"
+                
 
             # 提取描述
-            description = element.select_one('div.content > a:nth-of-type(2)').text.strip()
+            
 
+            description = element.select_one('div.content > a:nth-of-type(2)').text.strip()
+            # description = element.select_one('div.content > a:nth-of-type(2)').text.strip().replace('【' + title +'】',"")
+            description = re.sub(r"【" + re.escape(title) + "】", "", description)  # 使用正则去掉标题部分
             # Extract "利好" (positive)
             positive = element.select_one('a.like.rose-h').text.strip() if element.select_one('a.like.rose-h') else "无利好"
 
@@ -75,11 +97,13 @@ def fetch_gelonghui_news() -> List[Dict]:
 
             # 添加到列表
             news_list.append({
-                "time": news_time,
+                'social_media':"金色财经",
+                "date": news_time,
                 "title": title,
                 "description": description,
-                "link": link,
+                "url": link,
                 "emotions": f"[{positive}] [{negative}]",
+                'id':link
             })
 
         return news_list
@@ -90,11 +114,13 @@ def fetch_gelonghui_news() -> List[Dict]:
 
 
 # 调用函数并打印结果
-news = fetch_gelonghui_news()
-for item in news:
-    print(f"时间: {item['time']}")
-    print(f"标题: {item['title']}")
-    print(f"描述: {item['description']}")
-    print(f"链接: {item['link']}")
-    print(f"情绪: {item['emotions']}")
-    print("-" * 40)
+if __name__=="__main__":
+    news = fetch_jinse_news()
+    # for item in news:
+    #     print(f"时间: {item['time']}")
+    #     print(f"标题: {item['title']}")
+    #     print(f"描述: {item['description']}")
+    #     print(f"链接: {item['link']}")
+    #     print(f"情绪: {item['emotions']}")
+    #     print("-" * 40)
+    print(f'{news}')

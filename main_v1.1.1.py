@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import sys
 import time
@@ -42,8 +44,9 @@ redis_financial_pushed = RedisHandler(set_key=REDIS_PUSHED_FINANCIAL,default_ttl
 
 def save_financial_messages_to_redis():
     try: 
-        gelonghui_news_list = fetch_gelonghui_news()
-        for item in gelonghui_news_list:
+        # gelonghui_news_list = fetch_gelonghui_news()
+        jinsedata_news_list = fetch_jinse_news()
+        for item in jinsedata_news_list:
             
             
 
@@ -195,12 +198,25 @@ def format_message(json_item):
 
             message += f"<b>{json_item['date']}</b>"
             return message
+        elif json_item['social_media'] == '金色财经':
+            # title = json_item['title']
+            
+            url = json_item["url"]
+            hover_description = json_item['description']
+            # Full description in the message
+            message = f"<b>[{json_item['social_media']}:{json_item['date']}]]</b>\n"
+            # message += f"<b>{title}</b>\n"  # Title as bold
+            message += f"<a href='{url}'>{json_item['title']}</a>\n"  # Link to the full article
+            message += f"{hover_description}\n"  # Full description as italic
+            # message += f"情绪：<b>{json_item['emotions']}</b>\n"
+            # message += f"<b>{json_item['date']}</b>"
+            return message
         
         
         else:
             return f"<b>[{json_item['social_media']}]</b>：<a href=\"{json_item['url']}\">{json_item['title']}</a>"
     except Exception as e:
-        logger.warning('消息格式化出现错误：',e)
+        logger.warning(f'消息格式化出现错误：{e}')
         return  f"<b>[{e}]</b>"
 
 # 主程序运行
