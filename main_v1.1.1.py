@@ -204,7 +204,7 @@ def format_message(json_item):
             url = json_item["url"]
             hover_description = json_item['description']
             # Full description in the message
-            message = f"<b>[{json_item['social_media']}:{json_item['date']}]]</b>\n"
+            message = f"<b>[{json_item['social_media']}:{json_item['date']}]</b>\n"
             # message += f"<b>{title}</b>\n"  # Title as bold
             message += f"<a href='{url}'>{json_item['title']}</a>\n"  # Link to the full article
             message += f"{hover_description}\n"  # Full description as italic
