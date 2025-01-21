@@ -16,41 +16,32 @@ class LOGGER(logging.Logger):  # Inherit from logging.Logger
         self.log_path = os.path.join(log_dir, logfile_name)
         self.setup_log()
 
-    # def setup_log(self):
-    #     # 设置日志级别
-    #     self.setLevel(logging.INFO)
-        
-    #     # 创建 TimedRotatingFileHandler 处理器，设置每天切割，保留2天日志
-    #     file_handler = TimedRotatingFileHandler(filename=self.log_path, when="D", interval=1, backupCount=2)
-    #     file_handler.suffix = "%Y-%m-%d.log"
-    #     file_handler.extMatch = re.compile(r"^\d{4}-\d{2}-\d{2}.log$")
-        
-    #     # 设置日志输出格式
-    #     file_handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
-        
-    #     # 将文件处理器添加到 logger 中
-    #     self.addHandler(file_handler)
     def setup_log(self):
-        self.setLevel(logging.INFO)
+        self.setLevel(logging.INFO)  # 设置日志级别
         
         # 创建 TimedRotatingFileHandler
         file_handler = TimedRotatingFileHandler(
             filename=self.log_path,
-            when="D",
+            when="D",  # 按天切割
             interval=1,
-            backupCount=2,
+            backupCount=2,  # 保留最近的2个日志文件
             utc=False  # False 表示按系统时间（本地时间）切割日志
         )
         file_handler.suffix = "%Y-%m-%d.log"
         
         # 设置日志格式
-        file_handler.setFormatter(logging.Formatter(
+        formatter = logging.Formatter(
             "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        ))
+        )
+        file_handler.setFormatter(formatter)
         
-        # 添加文件处理器
+        # 添加文件处理器到 logger
         self.addHandler(file_handler)
 
+        # 创建 StreamHandler，将日志输出到标准输出（控制台）
+        stream_handler = logging.StreamHandler()  # 默认输出到 sys.stdout
+        stream_handler.setFormatter(formatter)  # 使用相同的格式
+        self.addHandler(stream_handler)  # 将控制台输出处理器添加到 logger
 
 # Example usage
 if __name__ == "__main__":
