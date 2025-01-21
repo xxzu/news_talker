@@ -1,0 +1,8 @@
+# 忽略 logs 目录
+logs/
+
+# 忽略其他不需要的文件和目录
+*.log
+*.pyc
+__pycache__
+.git

@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # 应用服务
+  news_talker:
+
+    container_name: news
+    build: . # 如果镜像不存在，会根据 Dockerfile 构建镜像
+    image: pushnews:v2 # 镜像名称，构建完成后会打上这个标签
+    # # container_name: news
+    env_file:
+      - .env # 引用.env文件中的环境变量
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+    depends_on:
+      - redis # 确保 Redis 服务先启动
+    ports:
+      - "8000:8000" # 假设应用监听端口为8000
+
+    volumes:
+      - ./logs:/app/logs # 挂载容器日志目录到主机
+    networks:
+      - app_network
+    restart: unless-stopped # 可选：容器重启策略
+
+  # Redis 服务
+  redis:
+    image: "redis:alpine" # 使用官方 Redis 镜像
+    container_name: redis
+    ports:
+      - "6379:6379" # 映射 Redis 默认端口
+    networks:
+      - app_network # 确保 Redis 加入到应用网络
+    volumes:
+      - redis-data:/data # 数据持久化
+
+# 网络配置
+networks:
+  app_network:
+    driver: bridge
+
+# 数据卷持久化
+volumes:
+  redis-data:
+    driver: local

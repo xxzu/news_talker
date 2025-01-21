@@ -17,3 +17,11 @@
 |- [x] 知乎|
 |- [x] kaopu|
 |- [x] 抖音|
+###### docker 构建
+首先创建基于项目的环境配置文件 
+1.pip安装环境 pip freeze > requirement.txt
+2.conda 安装环境 conda env export --no-builds > environment.yml
+3.从这两个环境中构建docker image  -》docker build -t images_names:v1
+请注意保持conda环境名称一致性
+保存构建的image :_> docker save pushnews:v1 > pushnews_v1.tar
+docker-compose构建.yml的时候时需要将redis_host的端口指向redis
