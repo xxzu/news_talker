@@ -24,16 +24,34 @@ class RedisHandler:
             self.redis.expire(self.set_key, ttl)
             logging.info(f"Added {value} to {self.set_key} with TTL {ttl}")
         return result
+    
+     #Add to list 
+    def add_to_list(self, value: str, ttl: int = None) -> bool:
+        ttl = ttl or self.default_ttl
+        # Use rpush to add value to the list
+        result = self.redis.rpush(self.set_key, value)
+        if result > 0:  # Check if the value was added (rpush returns the length of the list)
+            # Set TTL on the list if needed
+            self.redis.expire(self.set_key, ttl)
+            logging.info(f"Added {value} to {self.set_key} with TTL {ttl}")
+        return result > 0
 
     def add_multiple_to_set(self, values, ttl: int = None) -> None:
         for value in values:
             self.add_to_set(value, ttl)
 
     def random_pop_messages(self):
+        '''先进先出'''
         return self.redis.spop(self.set_key)
+    
+    def loop_pop_messages(self):
+        return self.redis.rpop(self.set_key)
 
     def get_set_length(self):
         return len(self.redis.smembers(self.set_key))
+    
+    def get_list_length(self):
+        return self.redis.llen(self.set_key)
 
     def is_in_set(self, value: str) -> bool:
         if value is None or not isinstance(value, (str, bytes, int, float)):
