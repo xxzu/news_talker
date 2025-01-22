@@ -56,7 +56,7 @@ def save_financial_messages_to_redis():
             if redis_financial_pushed.is_in_set(str(item_id)):
                 continue  # 跳过已推送的消息
 
-            redis_financial_server.add_to_set(json_item)
+            redis_financial_server.add_to_list(json_item)
        
     except Exception as e:
         logger.error(f"保存金融消息到 Redis 时发生错误: {e}")
@@ -64,8 +64,8 @@ def save_financial_messages_to_redis():
 def push_financial_messages_to_telegram():
     
     try:
-        if redis_financial_server.get_set_length() != 0:
-            item = redis_financial_server.random_pop_messages()
+        if redis_financial_server.get_list_length() != 0:
+            item = redis_financial_server.loop_pop_messages()
             
             json_item = json.loads(item)
             # logger.info(f'消息推送：{json_item}')
@@ -204,10 +204,11 @@ def format_message(json_item):
             url = json_item["url"]
             hover_description = json_item['description']
             # Full description in the message
-            message = f"<b>[{json_item['social_media']}:{json_item['date']}]</b>\n"
+            
             # message += f"<b>{title}</b>\n"  # Title as bold
-            message += f"<a href='{url}'>{json_item['title']}</a>\n"  # Link to the full article
+            message = f"<a href='{url}'>{json_item['title']}</a>\n"  # Link to the full article
             message += f"{hover_description}\n"  # Full description as italic
+            message += f"<b>[{json_item['social_media']}:{json_item['date']}]</b>"
             # message += f"情绪：<b>{json_item['emotions']}</b>\n"
             # message += f"<b>{json_item['date']}</b>"
             return message
