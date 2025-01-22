@@ -1,57 +1,67 @@
 import os
-import re
 import logging
 from logging.handlers import TimedRotatingFileHandler
-
-class LOGGER(logging.Logger):  # Inherit from logging.Logger
-    
+from datetime import datetime, timedelta, timezone
+import re
+class LOGGER(logging.Logger):
     def __init__(self, default_path='./logs', logfile_name='my_log.log') -> None:
-        # 初始化日志类
-        super(LOGGER, self).__init__(logfile_name)  # 此处应该传递日志名称
-        # 确保路径存在，不存在就创建
+        # Initialize the logger class
+        super(LOGGER, self).__init__(logfile_name)  # Should pass the log file name
+        # Ensure the directory exists, create if it doesn't
         log_dir = os.path.join(default_path)
-        os.makedirs(log_dir, exist_ok=True)  # 确保日志目录存在
+        os.makedirs(log_dir, exist_ok=True)  # Ensure log directory exists
 
-        # 构造日志文件的完整路径
+        # Construct the full path for the log file
         self.log_path = os.path.join(log_dir, logfile_name)
         self.setup_log()
 
     def setup_log(self):
-        self.setLevel(logging.INFO)  # 设置日志级别
-        
-        # 创建 TimedRotatingFileHandler
+        self.setLevel(logging.INFO)  # Set log level
+
+        # Create TimedRotatingFileHandler
         file_handler = TimedRotatingFileHandler(
             filename=self.log_path,
-            when="D",  # 按天切割
+            when="D",  # Rotate logs daily
             interval=1,
-            backupCount=2,  # 保留最近的2个日志文件
-            utc=False  # False 表示按系统时间（本地时间）切割日志
+            backupCount=2,  # Keep the last 2 log files
+            utc=False  # Use local time for rotation
+        )
+
+        # Custom formatter with UTC+8
+        formatter = CustomFormatter(
+            fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S"
         )
         file_handler.suffix = "%Y-%m-%d.log"
+        file_handler.extMatch = re.compile(r"^\d{4}-\d{2}-\d{2}.log$")
         
-        # 设置日志格式
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
         file_handler.setFormatter(formatter)
-        
-        # 添加文件处理器到 logger
+       
+        # Add the file handler to logger
         self.addHandler(file_handler)
 
-        # 创建 StreamHandler，将日志输出到标准输出（控制台）
-        stream_handler = logging.StreamHandler()  # 默认输出到 sys.stdout
-        stream_handler.setFormatter(formatter)  # 使用相同的格式
-        self.addHandler(stream_handler)  # 将控制台输出处理器添加到 logger
+        # Create StreamHandler to output logs to the console
+        stream_handler = logging.StreamHandler()  # Output to sys.stdout by default
+        stream_handler.setFormatter(formatter)  # Use the same format
+        self.addHandler(stream_handler)  # Add the stream handler to the logger
+
+
+class CustomFormatter(logging.Formatter):
+    def formatTime(self, record, datefmt=None):
+        # Get the UTC time and convert to UTC+8 (Asia/Shanghai)
+        created_time = datetime.fromtimestamp(record.created, tz=timezone.utc)
+        local_time = created_time.astimezone(timezone(timedelta(hours=8)))  # Convert to UTC+8
+        return local_time.strftime("%Y-%m-%d %H:%M:%S")  # Return in the desired format
 
 # Example usage
 if __name__ == "__main__":
-    log_dir = "./logs1"  # 日志目录
-    log_name = "my_log.log"  # 日志文件名
+    log_dir = "./logs1"  # Log directory
+    log_name = "my_log.log"  # Log file name
     
-    # 实例化 logger
+    # Instantiate logger
     logger = LOGGER(log_dir, log_name)
     
-    # 记录日志
+    # Record some logs
     logger.info("This is an info message")
     logger.error("This is an error message")
     logger.warning("This is a warning message")
