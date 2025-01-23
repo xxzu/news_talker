@@ -46,7 +46,9 @@ def fetch_jinse_news() -> List[Dict]:
                     news_time = "无时间"
                 
                 description = element.select_one('div.content > a:nth-of-type(2)').text.strip()
+                
                 description = re.sub(r"【" + re.escape(title) + "】", "", description)
+                description = re.sub(r'金色财经报道,',"",description)
                 # positive = element.select_one('a.like.rose-h').text.strip() if element.select_one('a.like.rose-h') else "无利好"
                 # negative = element.select_one('a.like.fall').text.strip() if element.select_one('a.like.fall') else "无利空"
 
