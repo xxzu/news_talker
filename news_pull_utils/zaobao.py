@@ -20,7 +20,7 @@ def fetch_description(url):
         return content
     except Exception as e:
         logger.error( f"抓取早报内容错误：{e}")
-        return ""
+        return ' '
     
 
 def fetch_zaobao_news():
@@ -69,7 +69,7 @@ def fetch_zaobao_news():
         return news_items
     except Exception as e:
         logger.error(f"抓取早报新闻错误：{e}")
-        return ""
+        return []
 
 
 if __name__ == "__main__":

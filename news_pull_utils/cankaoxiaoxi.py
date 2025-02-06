@@ -15,6 +15,7 @@ headers = {
 
 
 def fetch_cankaoxinxi_news() -> List[Dict]:
+    
     # 定义需要请求的频道
     channels = ["zhongguo", "guandian", "gj"]
     base_url = "https://china.cankaoxiaoxi.com/json/channel"
@@ -54,12 +55,17 @@ def fetch_cankaoxinxi_news() -> List[Dict]:
             sorted_result = sorted(result, key=lambda x: x["date"], reverse=True)
             return sorted_result
         except requests.RequestException as e:
+            
             logger.error(f"请求失败: {e}")
+            
             time.sleep(2)  # Wait before retrying
+            return []  
         else:
             break  # If successful, exit the loop
+    return []
 
-    return []  
+        
+    
 
 
 

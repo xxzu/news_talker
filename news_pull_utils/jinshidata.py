@@ -66,6 +66,7 @@ def fetch_jinse_news() -> List[Dict]:
         except requests.RequestException as e:
             logger.error(f"请求失败: {e}")
             time.sleep(2)  # Wait before retrying
+            return []
         else:
             break  # If successful, exit the loop
 

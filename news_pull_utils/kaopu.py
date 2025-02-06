@@ -38,6 +38,7 @@ def fetch_kaopu_news_data():
         
         except requests.exceptions.RequestException as e:
             logger.error(f"Error fetching data from {url}: {e}")
+            return []
     
     return all_news
 

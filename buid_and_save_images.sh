@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置镜像名称
-IMAGE_NAME="pushnews:v2"
+IMAGE_NAME="pushnews_3"
 
 # 1. 构建镜像
 echo "Building Docker image..."
