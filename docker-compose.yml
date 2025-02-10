@@ -12,7 +12,8 @@ services:
       - .env # 引用.env文件中的环境变量
     environment:
       - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PW}
 
     depends_on:
       - redis # 确保 Redis 服务先启动

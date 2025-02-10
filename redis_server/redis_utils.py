@@ -8,14 +8,14 @@ load_dotenv()
 HOST = os.getenv("REDIS_HOST")
 PORT = int(os.getenv("REDIS_PORT"))
 DB = int(os.getenv("REDIS_DB"))
-
+password = os.getenv("REDIS_PW")
 logging.basicConfig(level=logging.INFO)
 
 class RedisHandler:
-    def __init__(self, host=HOST, port=PORT, db=DB, set_key="", default_ttl=86400):
+    def __init__(self, host=HOST, port=PORT, db=DB,password=password ,set_key="", default_ttl=86400):
         self.set_key = set_key
         self.default_ttl = default_ttl
-        self.redis = redis.StrictRedis(host=host, port=port, db=db, decode_responses=True)
+        self.redis = redis.StrictRedis(host=host, port=port, password=password,db=db, decode_responses=True)
 
     def add_to_set(self, value: str, ttl: int = None) -> bool:
         ttl = ttl or self.default_ttl
