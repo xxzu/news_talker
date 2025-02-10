@@ -59,7 +59,7 @@ def fetch_cankaoxinxi_news() -> List[Dict]:
             logger.error(f"请求失败: {e}")
             
             time.sleep(2)  # Wait before retrying
-            return []  
+            continue 
         else:
             break  # If successful, exit the loop
     return []
