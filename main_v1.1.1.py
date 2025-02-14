@@ -86,24 +86,24 @@ def push_financial_messages_to_telegram():
 def save_messages_to_redis():
     try:
         baidu_news_list = get_baidu_hot_search()
-        bilibili_hot_list = get_bilibili_hot_search()
-        tieba_hot_list = get_baidu_tieba_hot_topics()
+        # bilibili_hot_list = get_bilibili_hot_search()
+        # tieba_hot_list = get_baidu_tieba_hot_topics()
         zhihu_hot_list = get_zhihu_hot()
-        weibo_hot_list = fetch_weibo_hot_search()
+        # weibo_hot_list = fetch_weibo_hot_search()
         toutiao_hot_list = get_toutiao_hot()
         douyin_hot_list = fetch_douyin_hot_search()
         news36kr_hot_list = get_36kr_newsflashes()
         combined_news_hot_list = list(
                         chain(
                             zhihu_hot_list,
-                            weibo_hot_list, 
+                            # weibo_hot_list, 
                             toutiao_hot_list,
-                            tieba_hot_list,
-                            bilibili_hot_list,
+                            # tieba_hot_list,
+                            # bilibili_hot_list,
                             baidu_news_list,
                             douyin_hot_list,
                             news36kr_hot_list,
-                            fetch_cankaoxinxi_news(),
+                           # fetch_cankaoxinxi_news(),
                             fetch_kaopu_news_data(),
                             fetch_zaobao_news(),
                             
