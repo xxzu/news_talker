@@ -219,6 +219,42 @@ def format_message(json_item):
     except Exception as e:
         logger.warning(f'消息格式化出现错误：{e}')
         return  f"<b>[{e}]</b>"
+import threading
+# 任务异常捕获
+def safe_run(func):
+    def wrapper():
+        try:
+            func()
+        except Exception as e:
+            logger.error(f"任务 {func.__name__} 运行出错: {e}", exc_info=True)
+    return wrapper
+
+# 任务多线程执行
+def run_threaded(func):
+    def job():
+        thread = threading.Thread(target=safe_run(func))
+        thread.start()
+    return job
+
+if __name__ == "__main__":
+    # 注册任务
+
+    schedule.every(INTERVAL_TIME_FETCH_NEWS).seconds.do(run_threaded(save_messages_to_redis))
+    schedule.every(INTERVAL_PUSH_TIME).seconds.do(run_threaded(push_news_hot_to_telegram))
+    schedule.every(FINANCIAL_FETCH_TIME_NEWS).seconds.do(run_threaded(save_financial_messages_to_redis))
+    schedule.every(FINANCIAL_PUSH_TIME).seconds.do(run_threaded(push_financial_messages_to_telegram))
+
+    logger.info("程序启动成功！")
+
+    # 运行任务
+    while True:
+        schedule.run_pending()
+        logger.debug("定时任务检查中...")  # 记录心跳日志
+        time.sleep(1)
+
+
+
+
 
 # 主程序运行
 if __name__ == "__main__":
