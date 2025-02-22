@@ -9,7 +9,7 @@ from itertools import chain
 
 from utils.ivs_log import LOGGER
 # 定义日志配置
-logger = LOGGER(logfile_name='push')
+logger = LOGGER()
 from news_pull_utils import *
 
 from telegram_utils.sand_to_tg import send_to_telegram

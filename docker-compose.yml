@@ -36,6 +36,11 @@ services:
       - app_network # 确保 Redis 加入到应用网络
     volumes:
       - redis-data:/data # 数据持久化
+    env_file:
+      - .env # 引用.env文件中的环境变量
+    environment:
+      - REDIS_PASSWORD=${REDIS_PW} # 设置环境变量（仅供参考）
+    command: redis-server --requirepass ${REDIS_PW} # ✅ 关键：强制 Redis 需要密码
 
 # 网络配置
 networks:
