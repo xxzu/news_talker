@@ -22,7 +22,7 @@ class LOGGER(logging.Logger):
             filename=self.log_path,
             when="D", 
             interval=1,
-            backupCount=2,  
+            backupCount=1,  
             utc=True 
         )
 
@@ -31,8 +31,8 @@ class LOGGER(logging.Logger):
             fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S"
         )
-        file_handler.suffix = "%Y-%m-%d.log"
-        file_handler.extMatch = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+        # file_handler.suffix = "%Y-%m-%d-%H:%M:%S.log"
+        # file_handler.extMatch = re.compile(r"^\d{4}-\d{2}-\d{2}$")
         
         file_handler.setFormatter(formatter)
        
@@ -63,3 +63,6 @@ if __name__ == "__main__":
     logger.info("This is an info message")
     logger.error("This is an error message")
     logger.warning("This is a warning message")
+
+
+
